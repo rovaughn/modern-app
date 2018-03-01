@@ -1,0 +1,6 @@
+.terraform
+api.zip
+main
+rds-ca.pem
+terraform.tfstate.backup
+terraform.tfvars

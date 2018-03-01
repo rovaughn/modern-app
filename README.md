@@ -25,3 +25,8 @@ Overview of the stack:
 	backend           S3                 Lambda
 	                                       |
 	                                   Database
+
+instructions
+------------
+
+1. `terraform init`

@@ -1,3 +1,7 @@
+variable "name" {
+  type = "string"
+}
+
 variable "domain" {
   type = "string"
 }
@@ -10,15 +14,21 @@ variable "account_id" {
   type = "string"
 }
 
+variable "db_master_password" {
+  type = "string"
+}
+
+output "api_url" {
+  value = "https://${aws_api_gateway_rest_api.api.id}.execute-api.${var.region}.amazonaws.com"
+}
+
 provider "aws" {
-  #region = "REGION"
+  region = "${var.region}"
 }
 
 terraform {
   backend "s3" {
-    bucket = "BUCKET"
-    key    = "terraform-state"
-
-    #region = "us-east-1"
+    bucket = "alec-personal"
+    key    = "modern-app-terraform-state"
   }
 }

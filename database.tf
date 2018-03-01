@@ -13,7 +13,7 @@ resource "aws_security_group" "access-database" {
 resource "aws_security_group" "database" {
   name        = "database"
   description = "Security group for database"
-  vpc_id      = "vpc-96d67df3"
+  vpc_id      = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 3306
@@ -26,8 +26,8 @@ resource "aws_security_group" "database" {
 }
 
 resource "aws_db_instance" "default" {
-  identifier                          = "${var.domain}"
-  name                                = "${var.domain}"
+  identifier                          = "${var.name}"
+  name                                = "${var.name}"
   engine                              = "mysql"
   allow_major_version_upgrade         = true
   apply_immediately                   = true

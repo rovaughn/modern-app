@@ -1,5 +1,5 @@
 resource "aws_iam_role" "api_function" {
-  name = "${var.domain}-api-function-role"
+  name = "${var.name}-api-function-role"
 
   # This policy determines who/what can assume this role.  This means
   # "lambda" can call our function.
@@ -19,7 +19,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "api_function_policy" {
-  name = "${var.domain}-api-function-policy"
+  name = "${var.name}-api-function-policy"
   role = "${aws_iam_role.api_function.id}"
 
   # TODO could the RDS database resource be better?
@@ -56,9 +56,9 @@ EOF
 }
 
 resource "aws_security_group" "lambda" {
-  name        = "${var.domain}-api"
+  name        = "${var.name}-api"
   description = "Allows lambda to access resources"
-  vpc_id      = "${aws_vpc.api.id}"
+  vpc_id      = "${aws_vpc.default.id}"
 
   egress {
     from_port   = 3306
@@ -69,7 +69,7 @@ resource "aws_security_group" "lambda" {
 }
 
 resource "aws_lambda_function" "api" {
-  function_name    = "${var.domain}-api"
+  function_name    = "${var.name}-api"
   filename         = "./api.zip"
   source_code_hash = "${base64sha256(file("api.zip"))}"
   role             = "${aws_iam_role.api_function.arn}"
@@ -85,7 +85,10 @@ resource "aws_lambda_function" "api" {
   environment {
     variables = {
       environment = "lambda"
-      db_endpoint = "seohubdev.cfdg4ipjye9p.us-east-1.rds.amazonaws.com"
+      db_endpoint = "${aws_db_instance.default.endpoint}"
+      db_region   = "${var.region}"
+      db_user     = "master"
+      db_name     = "test"
     }
   }
 }
@@ -99,7 +102,7 @@ resource "aws_lambda_permission" "api_root" {
 }
 
 resource "aws_api_gateway_rest_api" "api" {
-  name = "${var.domain}-api"
+  name = "${var.name}-api"
 }
 
 resource "aws_api_gateway_method" "api_root_options" {

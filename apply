@@ -1,0 +1,15 @@
+#!/bin/sh
+set -eu
+
+# Grab the decrypted database master password from ParameterStore.
+password=$(
+	aws ssm get-parameter          \
+		--name db-master-password  \
+		--with-decryption          \
+		--query 'Parameter.Value'  \
+		--output text
+)
+
+# We pass the password as an environment variable to avoid writing it in a file
+# or passing it as a command line argument where other processes could see it.
+TF_VAR_db_master_password=$password terraform apply
